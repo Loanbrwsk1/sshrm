@@ -1,0 +1,35 @@
+#! /bin/bash
+
+ARGS=$1
+PORT=$3
+
+# CHECK if a port is set
+if [[ "$PORT" == "" ]]
+then
+	PORT=22
+fi
+
+# CHECK if only IP/HOSTNAME or user@IP/user@HOSTAME
+if [[ "$ARGS" =~ \@ ]]
+then
+	# KEEP only things after @ (The IP or HOSTNAME)
+	SRV=$(echo "$ARGS" | cut -d '@' -f2)
+	if [[ $PORT != 22 ]]
+	then
+		SRV="\[$SRV\]\:$PORT"
+	fi
+else
+	SRV="$ARGS"
+fi
+
+# REMOVE in known_hosts
+sed -i "/$SRV/d" ~/.ssh/known_hosts
+
+# ASK to reconnect
+read -p "Reconnect ? IT WILL RUN \"ssh $ARGS -p $PORT\" ? (Y/n) " RECO
+
+# CHECK ANSWSER
+if [[ "$RECO" != "n" ]]
+then
+	ssh "$ARGS" -p "$PORT"
+fi
