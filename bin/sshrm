@@ -23,7 +23,7 @@ else
 fi
 
 # REMOVE in known_hosts
-sed -i "/$SRV/d" ~/.ssh/known_hosts
+ssh-keygen -R "$SRV"
 
 # ASK to reconnect
 read -p "Reconnect ? IT WILL RUN \"ssh $ARGS -p $PORT\" ? (Y/n) " RECO
